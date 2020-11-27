@@ -8,12 +8,12 @@ import java.io.*;
  * in the text terminal.
  * 
  * This class uses an object of class InputReader to read input
- * from the user, and an object of class Responder to generate responses.
+ * from an input text file, and an object of class Responder to generate responses.
  * It contains a loop that repeatedly reads input and generates
  * output until the users wants to leave.
  * 
- * @author David J. Barnes and Michael Kölling.
- * @version 2016.02.29
+ * @author Karen Stagg
+ * @version November 30, 2020
  */
 public class SupportSystem
 {

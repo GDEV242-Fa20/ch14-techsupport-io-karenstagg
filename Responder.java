@@ -1,7 +1,16 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.Random;
+import java.util.Iterator;
 
 /**
  * The responder class represents a response generator object.
@@ -9,13 +18,14 @@ import java.util.*;
  * Input is presented to the responder as a set of words, and based on those
  * words the responder will generate a String that represents the response.
  *
- * Internally, the reponder uses a HashMap to associate words with response
- * strings and a list of default responses. If any of the input words is found
- * in the HashMap, the corresponding response is returned. If none of the input
+ * Internally, the reponder uses a HashMap, which is filled by a text file,
+ * to associate words with response strings and a list of default responses.
+ * If any of the input words is found in the HashMap, 
+ * the corresponding response is returned. If none of the input
  * words is recognized, one of the default responses is randomly chosen.
  * 
- * @author David J. Barnes and Michael Kölling.
- * @version 2016.02.29
+ * @author Karen Stagg
+ * @version November 30, 2020
  */
 public class Responder
 {
@@ -26,6 +36,9 @@ public class Responder
     // The name of the file containing the default responses.
     private static final String FILE_OF_DEFAULT_RESPONSES = "default.txt";
     private Random randomGenerator;
+    private Scanner reader;
+    //The name of the file used to fill the response HashMap.
+    private static final String RESPONSE_MAP = "responseMap.txt";
 
     /**
      * Construct a Responder
@@ -63,9 +76,54 @@ public class Responder
 
     /**
      * Enter all the known keywords and their associated responses
-     * into our response map.
+     * into our response map, using an input text file.
      */
     private void fillResponseMap()
+    {
+        Scanner reader;
+        String input;
+        String response;
+        String entireResponse = "";
+        
+        try
+        {
+            reader = new Scanner(Paths.get(RESPONSE_MAP)); 
+            //Loop to read entire file
+            do
+            {
+                input = reader.nextLine();
+                String[] symptomArray = input.split(",");
+                //Loop to read each key/value map pair, separated by a blank line
+                do
+                {
+                    response = reader.nextLine();
+                    if (entireResponse.length() > 0)
+                    {
+                        entireResponse = entireResponse + "\n" + response;
+                    }
+                    else
+                    {
+                        entireResponse = response;
+                    }
+                }
+                while (reader.hasNext() && response.length() != 0);
+                //Load the symptom(key) and response(value) into HashMap 
+                for (String symptom : symptomArray)
+                {
+                    responseMap.put(symptom.trim(), entireResponse);
+                }
+                //clear out entireResponse variable for next key
+                entireResponse = "";
+            }
+            while (reader.hasNext() && input.length() != 0);
+        }
+        catch(IOException e)
+        {
+            System.err.println("Cannot find file: " + RESPONSE_MAP);
+        }   
+    }
+    
+    /*private void fillResponseMap()
     {
         responseMap.put("crash", 
                         "Well, it never crashes on our system. It must have something\n" +
@@ -114,6 +172,7 @@ public class Responder
                         "they simply won't sell... Stubborn people they are. Nothing we can\n" +
                         "do about it, I'm afraid.");
     }
+    */
 
     /**
      * Build up a list of default responses from which we can pick
