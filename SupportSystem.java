@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.io.*;
 
 /**
  * This class implements a technical support system.
@@ -22,7 +23,7 @@ public class SupportSystem
     /**
      * Creates a technical support system.
      */
-    public SupportSystem()
+    public SupportSystem() 
     {
         reader = new InputReader();
         responder = new Responder();
